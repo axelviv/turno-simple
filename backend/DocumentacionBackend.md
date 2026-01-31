@@ -21,48 +21,48 @@ Enfoque Híbrido Guiado por Dominio con Arquitectura Limpia Simplificada**
 
 ### **FASE 2 — Casos de uso**
 
-2.1 Identificación de Casos de Uso 
-2.2 Descripción de Casos de Uso 
-2.3 Reglas y validaciones por Caso de Uso
+2.1 Identificación de Casos de Uso  
+2.2 Descripción de Casos de Uso  
+2.3 Reglas y validaciones por Caso de Uso  
 
 ### **FASE 3 — Lógica de negocio avanzada**
 
-3.1 Definición de reglas de fechas y rangos válidos 
-3.2 Definición de reglas de horarios y disponibilidad 
-3.3 Definición de reglas de cupos y límites 
-3.4 Definición de estrategias de asignación automática 
-3.5 Definición de políticas especiales del negocio
+3.1 Definición de reglas de fechas y rangos válidos  
+3.2 Definición de reglas de horarios y disponibilidad  
+3.3 Definición de reglas de cupos y límites  
+3.4 Definición de estrategias de asignación automática  
+3.5 Definición de políticas especiales del negocio  
 
 ### **FASE 4 — Infraestructura**
 
-4.1 Configuración de acceso a datos (ORM / repositorios) 
-4.2 Configuración de la base de datos 
-4.3 Estrategia de migraciones y actualización de esquema 
-4.4 Estrategia de inicialización de datos 
-4.5 Estrategia de backups y recuperación 
-4.6 Configuración de rendimiento y modos de escritura
+4.1 Configuración de acceso a datos (ORM / repositorios)  
+4.2 Configuración de la base de datos  
+4.3 Estrategia de migraciones y actualización de esquema  
+4.4 Estrategia de inicialización de datos  
+4.5 Estrategia de backups y recuperación  
+4.6 Configuración de rendimiento y modos de escritura  
 
 ### **FASE 5 — API**
 
-5.1 Diseño de controladores / endpoints 
-5.2 Definición de modelos de transporte (DTOs) 
-5.3 Validaciones de entrada y reglas de contrato 
-5.4 Manejo de errores y respuestas estándar 
-5.5 Registro de logs y trazabilidad
+5.1 Diseño de controladores / endpoints  
+5.2 Definición de modelos de transporte (DTOs)  
+5.3 Validaciones de entrada y reglas de contrato  
+5.4 Manejo de errores y respuestas estándar  
+5.5 Registro de logs y trazabilidad  
 
 ### **FASE 6 — Pruebas**
 
-6.1 Pruebas de creación y modificación de entidades clave 
-6.2 Pruebas de reglas de negocio e invariantes 
-6.3 Pruebas de disponibilidad y restricciones de uso 
-6.4 Pruebas de estados y transiciones 
-6.5 Pruebas de límites, bordes y escenarios extremos
+6.1 Pruebas de creación y modificación de entidades clave  
+6.2 Pruebas de reglas de negocio e invariantes  
+6.3 Pruebas de disponibilidad y restricciones de uso  
+6.4 Pruebas de estados y transiciones  
+6.5 Pruebas de límites, bordes y escenarios extremos  
 
 ### **FASE 7 — Integración**
 
-7.1 Integración con la interfaz de usuario (frontend) 
-7.2 Pruebas de flujo completo end-to-end 
-7.3 Ajustes finales y correcciones de integración
+7.1 Integración con la interfaz de usuario (frontend)  
+7.2 Pruebas de flujo completo end-to-end  
+7.3 Ajustes finales y correcciones de integración  
 
 -----------------------------------------------------------------------------------------------------------
 
