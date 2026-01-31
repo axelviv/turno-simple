@@ -15,9 +15,9 @@ Enfoque Híbrido Guiado por Dominio con Arquitectura Limpia Simplificada**
 
 ### **FASE 1 — Dominio**
 
-1.1 Definir entidades del dominio 
-1.2 Definir relaciones entre entidades del dominio 
-1.3 Definir invariantes del dominio
+1.1 Definir entidades del dominio  
+1.2 Definir relaciones entre entidades del dominio  
+1.3 Definir invariantes del dominio  
 
 ### **FASE 2 — Casos de uso**
 
