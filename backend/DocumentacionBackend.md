@@ -144,6 +144,9 @@ Los casos de uso principales del sistema son:
 - Casos de Uso de Reportes
   - Generar reporte mensual de turnos
 
+- Casos de Uso del Sistema (Procesos Automáticos) 
+  - Confirmación Automática del Turno 
+  - Finalización Automática del Turno
 
 
 2.2 **Descripción de Casos de Uso**
@@ -895,7 +898,7 @@ Permitir la modificación de un Turno existente, garantizando que los cambios cu
 ---
 
 ## **Objetivo**
-Permitir que el Médico cancele un Turno existente dentro del margen permitido, cambiando su estado a "Cancelado", devolviendo el cupo consumido y liberando todas las fechas y horarios reservados para las sesiones del turno
+Permitir que el Usuario cancele un Turno existente dentro del margen permitido, cambiando su estado a "Cancelado", devolviendo el cupo consumido y liberando todas las fechas y horarios reservados para las sesiones del turno
 
 ---
 
@@ -990,6 +993,475 @@ Permitir que el Médico cancele un Turno existente dentro del margen permitido, 
 ## **Datos involucrados**
 - **Médico:** DNI, nombre, apellido, cupos consumidos en el mes. 
 - **Paciente:** DNI, nombre, apellido, teléfono, email. 
-- **Turno:** - Id - Paciente - Médico - Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado) - Fecha y hora de la primera sesión - Fechas y horarios de todas las sesiones reservadas - CantidadSesiones - DuraciónSesion - Fecha de creación - Registro de cancelación (si aplica)
+- **Turno:** Id, Paciente, Médico, Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado), Fecha y hora de la primera sesión, Fechas y horarios de todas las sesiones reservadas, CantidadSesiones, DuraciónSesion, Fecha de creación
+
+---
+
+-----------------------------------------------------------------------------------------------------------
+
+## **Caso de Uso: Abandonar Turno**
+
+---
+
+## **Objetivo**
+Permitir que el Usuario marque un Turno como "Abandonado" cuando la primera sesión ya ocurrió, liberando únicamente las sesiones futuras sin afectar los cupos del Médico.
+
+---
+
+## **Actores**
+- **Usuario** (actor principal)
+- **Sistema** (actor secundario)
+
+---
+
+## **Precondiciones**
+- El Usuario debe tener acceso al sistema.
+- El Turno debe existir.
+- El Turno debe estar en estado "Confirmado".
+- La primera sesión del Turno debe haber concluido.
+- El Turno no debe estar en estado Pendiente, Cancelado, Finalizado o Abandonado.
+
+---
+
+## **Postcondiciones**
+- El Turno queda con estado "Abandonado".
+- El sistema libera los horarios de todas las sesiones futuras del Turno.
+- El cupo mensual del Médico no se modifica.
+- El registro de abandono queda almacenado con fecha, hora y Usuario responsable.
+
+---
+
+## **Flujo principal**
+1. El Usuario selecciona un Turno existente para marcar como Abandonado.  
+2. El Sistema muestra los datos del Turno y solicita confirmación.  
+3. El Usuario confirma la acción.  
+4. El Sistema valida que la primera sesión ya haya concluido.  
+5. El Sistema valida que el Turno esté en estado "Confirmado".  
+6. El Sistema cambia el estado del Turno a "Abandonado".  
+7. El Sistema libera los horarios de todas las sesiones futuras del Turno.  
+8. El Sistema registra la acción (fecha y hora).  
+9. El Sistema muestra la confirmación de la operación.
+
+---
+
+## **Flujos alternativos**
+
+### **A1 — El Usuario cancela la operación**
+1. El Usuario decide no continuar con el abandono del Turno.  
+2. El caso de uso termina sin realizar cambios.
+
+---
+
+## **Flujos de excepción**
+
+### **E1 — El Turno no existe**
+1. El Sistema informa que el Turno seleccionado no existe.  
+2. El caso de uso termina.
+
+---
+
+### **E2 — La primera sesión no ha ocurrido**
+1. El Sistema informa que el Turno no puede marcarse como Abandonado porque la primera sesión aún no ocurrió.  
+2. El caso de uso termina sin realizar cambios.
+
+---
+
+### **E3 — El Turno está en un estado no permitido**
+1. El Sistema detecta que el Turno está en estado Pendiente, Cancelado, Finalizado o Abandonado.  
+2. El Sistema informa que no puede marcarse como Abandonado.  
+3. El caso de uso termina sin realizar cambios.
+
+---
+
+### **E4 — Error al actualizar los datos**
+1. El Sistema informa que ocurrió un error al intentar actualizar el Turno.  
+2. El caso de uso termina sin realizar cambios.
+
+---
+
+## **Reglas de negocio asociadas**
+- **RN-01:** El id del Turno debe ser único.  
+- **RN-02:** Un Turno solo puede marcarse como "Abandonado" si la primera sesión ya ocurrió.  
+- **RN-03:** El estado "Abandonado" libera únicamente las sesiones futuras.  
+- **RN-04:** El estado "Abandonado" no afecta cupos del Médico.  
+- **RN-05:** Un Turno no puede marcarse como "Abandonado" si está en estado Pendiente, Cancelado, Finalizado o Abandonado.  
+- **RN-06:** Si la segunda sesión ya inició, el Turno solo puede pasar a estado Abandonado o Finalizado.  
+- **RN-07:** El Sistema debe registrar la acción de abandono con fecha y hora.
+
+---
+
+## **Requerimientos funcionales derivados**
+- **RF-01:** El Sistema debe permitir seleccionar un Turno para marcar como "Abandonado".  
+- **RF-02:** El Sistema debe validar que la primera sesión ya haya ocurrido.  
+- **RF-03:** El Sistema debe actualizar el estado del Turno a "Abandonado".  
+- **RF-04:** El Sistema debe liberar los horarios de las sesiones futuras.  
+- **RF-05:** El Sistema debe registrar la acción realizada.  
+- **RF-06:** El Sistema debe informar el resultado de la operación.
+
+---
+
+## **Datos involucrados**
+- **Médico:** DNI, nombre, apellido, cupos consumidos.  
+- **Paciente:** DNI, nombre, apellido, teléfono, email.  
+- **Turno:** Id, Paciente, Médico, Diagnóstico, Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado), CantidadSesiones (10), DuraciónSesion (20 minutos), FechaInicio, FechaFin (calculada), HoraInicio, Sesiones futuras reservadas (a liberar)
+
+---
+
+-----------------------------------------------------------------------------------------------------------
+
+## **Caso de Uso: Listar Turnos**
+
+---
+
+## **Objetivo**
+Permitir que el Usuario visualice los Turnos registrados en el sistema, aplicando filtros opcionales para facilitar la búsqueda y el análisis.
+
+---
+
+## **Actores**
+- **Usuario** (actor principal)
+- **Sistema** (actor secundario)
+
+---
+
+## **Precondiciones**
+- El Usuario debe tener acceso al sistema.
+
+---
+
+## **Postcondiciones**
+- El Sistema muestra el listado de Turnos según los filtros seleccionados.
+- No se realizan modificaciones sobre los Turnos.
+
+---
+
+## **Flujo principal**
+1. El Usuario accede a la opción “Listar Turnos”.  
+2. El Sistema muestra los filtros disponibles:  
+   - Médico (obligatorio si no se selecciona Paciente)  
+   - Paciente (obligatorio si no se selecciona Médico) 
+   - Rango de fechas (FechaDesde – FechaHasta) 
+   - Estado del Turno  
+3. El Usuario selecciona uno o más filtros (opcional).  
+4. El Usuario confirma la búsqueda.  
+5. El Sistema obtiene los Turnos que cumplen con los criterios seleccionados.  
+6. El Sistema muestra el listado de Turnos con la siguiente información mínima:  
+   - Id del Turno  
+   - Paciente  
+   - Médico  
+   - FechaInicio  
+   - HoraInicio
+   - FechaÚltimoCambioEstado  
+   - Estado  
+   - Diagnóstico 
+7. El Usuario visualiza los resultados.
+
+---
+
+## **Flujos alternativos**
+
+### A1 — El Usuario no selecciona filtros obligatorios
+1. El Usuario intenta confirmar la búsqueda sin seleccionar al menos un Médico o un Paciente.
+2. El Sistema informa que debe seleccionar al menos uno de estos filtros para continuar.
+3. El Sistema permite corregir la selección o cancelar la operación.
+
+---
+
+### **A2 — No se encuentran Turnos**
+1. El Sistema informa que no existen Turnos que coincidan con los criterios seleccionados.  
+2. El caso de uso continúa permitiendo modificar los filtros o finalizar la consulta.
+
+---
+
+## **Flujos de excepción**
+
+### **E1 — Error al obtener los datos**
+1. El Sistema informa que ocurrió un error al intentar recuperar los Turnos.  
+2. El caso de uso termina sin mostrar resultados.
+
+---
+
+## **Reglas de negocio asociadas**
+- **RN-01:** El id del Turno debe ser único.  
+- **RN-02:** El Sistema debe permitir filtrar Turnos por Médico, Paciente, Rango de fechas (FechaDesde – FechaHasta) y Estado.  
+- **RN-03:** El Sistema debe mostrar únicamente información correspondiente a Turnos existentes.  
+- **RN-04:** El Sistema no debe permitir modificar Turnos desde este caso de uso.  
+- **RN-05:** El Sistema debe mostrar el estado actual del Turno según su ciclo de vida.
+- **RN-06:** El Usuario debe seleccionar al menos un filtro obligatorio (Médico o Paciente) para ejecutar la búsqueda.
+
+
+---
+
+## **Requerimientos funcionales derivados**
+- **RF-01:** El Sistema debe permitir acceder a la opción de Listar Turnos.  
+- **RF-02:** El Sistema debe permitir aplicar filtros opcionales adicionales (Rango de fechas y Estado del Turno).  
+- **RF-03:** El Sistema debe mostrar los Turnos que coincidan con los filtros seleccionados.  
+- **RF-04:** El Sistema debe informar cuando no existan resultados.  
+- **RF-05:** El Sistema debe informar errores en la obtención de datos.
+- **RF-06:** El Sistema debe validar que el Usuario seleccione al menos un filtro obligatorio antes de ejecutar la búsqueda.
+
+---
+
+## **Datos involucrados**
+- **Médico:** DNI, nombre, apellido.  
+- **Paciente:** DNI, nombre, apellido.  
+- **Turno:** Id, Paciente, Médico, Diagnóstico, Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado), FechaInicio, HoraInicio, CantidadSesiones (10), DuraciónSesion (20 minutos)
+
+---
+
+-----------------------------------------------------------------------------------------------------------
+
+## **Casos de Uso de Reportes**
+
+## Caso de Uso: Generar reporte mensual de turnos
+
+---
+
+## Objetivo
+Generar un reporte mensual basado exclusivamente en los Turnos creados durante un mes específico, garantizando que la información corresponda al cupo mensual de cada Médico y permitiendo analizar cuántos turnos fueron cobrados, cancelados y abandonados, discriminados por Médico.
+
+---
+
+## Actores
+- Usuario (actor principal)
+- Sistema (actor secundario)
+
+---
+
+## Precondiciones
+- El Usuario debe tener acceso al Sistema.
+- Deben existir Turnos creados en el mes seleccionado.
+
+---
+
+## Postcondiciones
+- El Sistema genera y muestra el reporte mensual solicitado.
+- No se realizan modificaciones sobre los Turnos.
+
+---
+
+## Flujo principal
+1. El Usuario accede a la opción “Generar reporte mensual de turnos”.
+2. El Sistema solicita seleccionar el mes y año del reporte.
+3. El Usuario selecciona el mes y año deseados.
+4. El Usuario confirma la generación del reporte.
+5. El Sistema obtiene todos los Turnos creados dentro del mes seleccionado.
+6. El Sistema genera el reporte con la siguiente información consolidada:
+   - Cantidad total de Turnos creados en el mes
+   - Cantidad de Turnos cobrados por Médico  
+     (Confirmados + Finalizados + Abandonados)
+   - Cantidad de Turnos cancelados por Médico
+   - Cantidad de Turnos abandonados por Médico  
+     (subconjunto de los cobrados)
+7. El Sistema muestra el reporte al Usuario.
+
+---
+
+## Flujos alternativos
+
+### A1 — No existen Turnos creados en el mes seleccionado
+1. El Sistema informa que no existen Turnos creados en el mes elegido.
+2. El Sistema permite seleccionar otro mes o cancelar la operación.
+
+---
+
+## Flujos de excepción
+
+### E1 — Error al obtener los datos
+1. El Sistema informa que ocurrió un error al intentar generar el reporte.
+2. El caso de uso termina sin mostrar resultados.
+
+---
+
+## Reglas de negocio asociadas
+- RN-01: El reporte debe incluir únicamente Turnos cuyo FechaCreación pertenezca al mes seleccionado.
+- RN-02: El Sistema debe consolidar la información en tres categorías principales, discriminadas por Médico:
+  - Turnos cobrados (Confirmados + Finalizados + Abandonados)
+  - Turnos cancelados
+  - Turnos abandonados (detalle dentro de los cobrados)
+- RN-03: El Sistema debe consolidar la información por Médico.
+- RN-04: El Sistema no debe modificar Turnos durante la generación del reporte.
+- RN-05: El reporte debe reflejar el estado actual de cada Turno al momento de la consulta.
+- RN-06: La distribución temporal debe basarse exclusivamente en la FechaCreación, para garantizar que los datos correspondan al mismo cupo mensual.
+
+---
+
+## Requerimientos funcionales derivados
+- RF-01: El Sistema debe permitir seleccionar el mes y año del reporte.
+- RF-02: El Sistema debe obtener los Turnos creados en el período seleccionado.
+- RF-03: El Sistema debe consolidar la información en las categorías: cobrados, cancelados y abandonados, discriminadas por Médico.
+- RF-04: El Sistema debe mostrar el reporte generado.
+- RF-05: El Sistema debe informar cuando no existan datos para el período seleccionado.
+- RF-06: El Sistema debe informar errores en la generación del reporte.
+
+---
+
+## Datos involucrados
+- Médico: DNI, nombre, apellido.
+- Paciente: DNI, nombre, apellido.
+- Turno: Id, Paciente, Médico, Diagnóstico, ,Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado), FechaCreación, FechaInicio, HoraInicio, FechaÚltimoCambioEstado, CantidadSesiones (10), DuraciónSesion (20 minutos)
+
+---
+
+-----------------------------------------------------------------------------------------------------------
+
+## **Casos de Uso del Sistema (Procesos Automáticos) **
+
+## Caso de Uso: Confirmación Automática del Turno
+
+---
+
+## Objetivo
+Permitir que el Sistema confirme automáticamente los Turnos que cumplen las condiciones establecidas, garantizando que los turnos pendientes pasen a estado Confirmado sin intervención del Usuario.
+
+---
+
+## Actores
+- Sistema (actor principal)
+
+---
+
+## Precondiciones
+- El Turno debe encontrarse en estado Pendiente.
+- El Turno debe tener una FechaInicio futura.
+- Debe existir una regla de negocio que determine cuándo se realiza la confirmación automática.
+
+---
+
+## Postcondiciones
+- El Turno cambia su estado a Confirmado.
+- Se actualiza la FechaÚltimoCambioEstado del Turno.
+
+---
+
+## Flujo principal
+1. El Sistema ejecuta el proceso automático de confirmación en el momento configurado (Al iniciarse la primera sesión).
+2. El Sistema identifica todos los Turnos en estado Pendiente cuya FechaInicio se encuentre dentro del período definido para la confirmación automática.
+3. El Sistema cambia el estado de cada Turno identificado a Confirmado.
+4. El Sistema actualiza la FechaÚltimoCambioEstado del Turno.
+5. El Sistema registra la operación en el log de procesos automáticos.
+
+---
+
+## Flujos alternativos
+
+### A1 — No existen Turnos que cumplan las condiciones
+1. El Sistema no encuentra Turnos pendientes dentro del período de confirmación.
+2. El proceso finaliza sin realizar cambios.
+
+---
+
+## Flujos de excepción
+
+### E1 — Error al actualizar el estado del Turno
+1. El Sistema detecta un error al intentar confirmar un Turno.
+2. El Sistema registra el error en el log.
+3. El Sistema continúa procesando los demás Turnos.
+
+---
+
+## Reglas de negocio asociadas
+- RN-01: Un Turno solo puede ser confirmado automáticamente si se encuentra en estado Pendiente.
+- RN-02: La confirmación automática debe ejecutarse únicamente cuando la fecha y hora actuales coincidan con la FechaInicio y HoraInicio del Turno.
+- RN-03: La confirmación automática no debe modificar Turnos en estado Cancelado, Finalizado o Abandonado.
+- RN-04: La FechaÚltimoCambioEstado debe actualizarse cada vez que el Turno cambie de estado.
+
+---
+
+## Requerimientos funcionales derivados
+- RF-01: El Sistema debe ejecutar automáticamente el proceso de confirmación en el momento configurado.
+- RF-02: El Sistema debe identificar Turnos pendientes que cumplan las condiciones de confirmación automática.
+- RF-03: El Sistema debe actualizar el estado del Turno a Confirmado.
+- RF-04: El Sistema debe registrar la operación en el log.
+- RF-05: El Sistema debe registrar errores sin interrumpir el proceso.
+
+---
+
+## Datos involucrados
+- Turno: Id, Paciente, Médico, Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado), FechaCreación, FechaInicio, HoraInicio, FechaÚltimoCambioEstado, CantidadSesiones (10), DuraciónSesion (20 minutos)
+
+---
+
+-----------------------------------------------------------------------------------------------------------
+
+## Caso de Uso: Finalización Automática del Turno
+
+---
+
+## Objetivo
+Permitir que el Sistema finalice automáticamente los Turnos cuando se hayan completado todas las sesiones programadas, considerando que las sesiones se realizan una por día hábil y siempre a la misma hora, garantizando que el estado del Turno refleje correctamente que el tratamiento fue concluido sin intervención del Usuario.
+
+---
+
+## Actores
+- Sistema (actor principal)
+
+---
+
+## Precondiciones
+- El Turno debe encontrarse en estado "Confirmado".
+- Debe existir una FechaInicio, HoraInicio y DuraciónSesion válidas.
+- Debe existir un valor válido en CantidadSesiones (10).
+- Las sesiones deben realizarse una por día hábil, siempre a la misma hora.
+
+---
+
+## Postcondiciones
+- El Turno cambia su estado a "Finalizado".
+- Se actualiza la FechaÚltimoCambioEstado del Turno.
+
+---
+
+## Flujo principal
+1. El Sistema ejecuta cada 1 minuto el proceso automático de finalización.
+2. El Sistema identifica todos los Turnos en estado Confirmado cuya última sesión ya haya concluido.
+   - La última sesión se determina sumando "CantidadSesiones días hábiles" a la "FechaInicio", manteniendo la misma HoraInicio.
+   - La sesión se considera concluida cuando:
+     - FechaÚltimaSesión + DuraciónSesion  
+       es anterior o igual a la fecha y hora actuales.
+3. El Sistema cambia el estado de cada Turno identificado a "Finalizado".
+4. El Sistema actualiza la FechaÚltimoCambioEstado del Turno.
+5. El Sistema registra la operación en el log de procesos automáticos.
+
+---
+
+## Flujos alternativos
+
+### A1 — No existen Turnos que cumplan las condiciones
+1. El Sistema no encuentra Turnos confirmados cuya última sesión haya concluido.
+2. El proceso finaliza sin realizar cambios.
+
+---
+
+## Flujos de excepción
+
+### E1 — Error al actualizar el estado del Turno
+1. El Sistema detecta un error al intentar finalizar un Turno.
+2. El Sistema registra el error en el log.
+3. El Sistema continúa procesando los demás Turnos.
+
+---
+
+## Reglas de negocio asociadas
+- RN-01: Un Turno solo puede ser finalizado automáticamente si se encuentra en estado "Confirmado".
+- RN-02: La finalización automática debe ejecutarse únicamente cuando la fecha y hora actuales sean posteriores a la finalización de la última sesión.
+- RN-03: La última sesión se determina sumando "CantidadSesiones días hábiles" a la "FechaInicio", manteniendo la misma HoraInicio.
+- RN-04: La finalización automática no debe modificar Turnos en estado Cancelado, Pendiente o Abandonado.
+- RN-05: La FechaÚltimoCambioEstado debe actualizarse cada vez que el Turno cambie de estado.
+- RN-06: Si el Turno no fue confirmado automáticamente al inicio de la primera sesión, no puede ser finalizado automáticamente.
+
+---
+
+## Requerimientos funcionales derivados
+- RF-01: El Sistema debe ejecutar automáticamente el proceso de finalización cada 1 minuto.
+- RF-02: El Sistema debe identificar Turnos confirmados cuya última sesión haya concluido.
+- RF-03: El Sistema debe actualizar el estado del Turno a Finalizado.
+- RF-04: El Sistema debe registrar la operación en el log.
+- RF-05: El Sistema debe registrar errores sin interrumpir el proceso.
+
+---
+
+## Datos involucrados
+- Turno: Id, Paciente, Médico, Estado (Pendiente / Confirmado / Cancelado / Finalizado / Abandonado), FechaCreación, ,FechaInicio, HoraInicio, DuraciónSesion (20 minutos), CantidadSesiones (10),FechaÚltimoCambioEstado
 
 ---
